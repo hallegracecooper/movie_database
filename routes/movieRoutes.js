@@ -3,6 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const movieController = require('../controllers/movieController');
+const { validateMovie } = require('../validators/movieValidator'); // Added validator import
 
 /**
  * @swagger
@@ -54,11 +55,11 @@ const movieController = require('../controllers/movieController');
  *       201:
  *         description: Movie created successfully.
  *       400:
- *         description: Missing required fields.
+ *         description: Validation error, missing required fields or invalid data.
  *       500:
  *         description: Server error.
  */
-router.post('/', movieController.createMovie);
+router.post('/', validateMovie, movieController.createMovie);
 
 /**
  * @swagger
@@ -119,12 +120,14 @@ router.get('/:id', movieController.getMovieById);
  *     responses:
  *       200:
  *         description: Updated movie.
+ *       400:
+ *         description: Validation error.
  *       404:
  *         description: Movie not found.
  *       500:
  *         description: Server error.
  */
-router.put('/:id', movieController.updateMovie);
+router.put('/:id', validateMovie, movieController.updateMovie);
 
 /**
  * @swagger

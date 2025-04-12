@@ -3,6 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const { validateUser } = require('../validators/userValidator');
 
 /**
  * @swagger
@@ -39,11 +40,11 @@ const userController = require('../controllers/userController');
  *       201:
  *         description: User created successfully.
  *       400:
- *         description: Missing required fields.
+ *         description: Validation error.
  *       500:
  *         description: Server error.
  */
-router.post('/', userController.createUser);
+router.post('/', validateUser, userController.createUser);
 
 /**
  * @swagger
@@ -104,12 +105,14 @@ router.get('/:id', userController.getUserById);
  *     responses:
  *       200:
  *         description: Updated user.
+ *       400:
+ *         description: Validation error.
  *       404:
  *         description: User not found.
  *       500:
  *         description: Server error.
  */
-router.put('/:id', userController.updateUser);
+router.put('/:id', validateUser, userController.updateUser);
 
 /**
  * @swagger

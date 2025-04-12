@@ -1,6 +1,9 @@
+// routes/reviewRoutes.js
+
 const express = require('express');
 const router = express.Router();
 const reviewController = require('../controllers/reviewController');
+const { validateReview } = require('../validators/reviewValidator');
 
 /**
  * @swagger
@@ -43,11 +46,11 @@ const reviewController = require('../controllers/reviewController');
  *       201:
  *         description: Review created successfully.
  *       400:
- *         description: Missing required fields.
+ *         description: Validation error.
  *       500:
  *         description: Server error.
  */
-router.post('/', reviewController.createReview);
+router.post('/', validateReview, reviewController.createReview);
 
 /**
  * @swagger
@@ -108,12 +111,14 @@ router.get('/:id', reviewController.getReviewById);
  *     responses:
  *       200:
  *         description: Updated review.
+ *       400:
+ *         description: Validation error.
  *       404:
  *         description: Review not found.
  *       500:
  *         description: Server error.
  */
-router.put('/:id', reviewController.updateReview);
+router.put('/:id', validateReview, reviewController.updateReview);
 
 /**
  * @swagger

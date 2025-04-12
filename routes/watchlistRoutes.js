@@ -1,6 +1,9 @@
+// routes/watchlistRoutes.js
+
 const express = require('express');
 const router = express.Router();
 const watchlistController = require('../controllers/watchlistController');
+const { validateWatchlist } = require('../validators/watchlistValidator');
 
 /**
  * @swagger
@@ -38,11 +41,11 @@ const watchlistController = require('../controllers/watchlistController');
  *       201:
  *         description: Watchlist created successfully.
  *       400:
- *         description: Missing required fields.
+ *         description: Validation error.
  *       500:
  *         description: Server error.
  */
-router.post('/', watchlistController.createWatchlist);
+router.post('/', validateWatchlist, watchlistController.createWatchlist);
 
 /**
  * @swagger
@@ -103,12 +106,14 @@ router.get('/:id', watchlistController.getWatchlistById);
  *     responses:
  *       200:
  *         description: Updated watchlist.
+ *       400:
+ *         description: Validation error.
  *       404:
  *         description: Watchlist not found.
  *       500:
  *         description: Server error.
  */
-router.put('/:id', watchlistController.updateWatchlist);
+router.put('/:id', validateWatchlist, watchlistController.updateWatchlist);
 
 /**
  * @swagger
