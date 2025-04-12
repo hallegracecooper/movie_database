@@ -2,8 +2,9 @@
 
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 const movieController = require('../controllers/movieController');
-const { validateMovie } = require('../validators/movieValidator'); // Added validator import
+const { validateMovie } = require('../validators/movieValidator');
 
 /**
  * @swagger
@@ -43,8 +44,10 @@ const { validateMovie } = require('../validators/movieValidator'); // Added vali
  * @swagger
  * /movies:
  *   post:
- *     summary: Create a new movie
+ *     summary: Create a new movie (protected)
  *     tags: [Movies]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -55,11 +58,13 @@ const { validateMovie } = require('../validators/movieValidator'); // Added vali
  *       201:
  *         description: Movie created successfully.
  *       400:
- *         description: Validation error, missing required fields or invalid data.
+ *         description: Validation error.
+ *       401:
+ *         description: Unauthorized.
  *       500:
  *         description: Server error.
  */
-router.post('/', validateMovie, movieController.createMovie);
+router.post('/', passport.authenticate('jwt', { session: false }), validateMovie, movieController.createMovie);
 
 /**
  * @swagger
@@ -102,8 +107,10 @@ router.get('/:id', movieController.getMovieById);
  * @swagger
  * /movies/{id}:
  *   put:
- *     summary: Update a movie by ID
+ *     summary: Update a movie by ID (protected)
  *     tags: [Movies]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -122,12 +129,14 @@ router.get('/:id', movieController.getMovieById);
  *         description: Updated movie.
  *       400:
  *         description: Validation error.
+ *       401:
+ *         description: Unauthorized.
  *       404:
  *         description: Movie not found.
  *       500:
  *         description: Server error.
  */
-router.put('/:id', validateMovie, movieController.updateMovie);
+router.put('/:id', passport.authenticate('jwt', { session: false }), validateMovie, movieController.updateMovie);
 
 /**
  * @swagger

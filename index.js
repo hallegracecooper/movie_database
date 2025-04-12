@@ -8,19 +8,25 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swagger');
+const passport = require('passport');
 
 const movieRoutes = require('./routes/movieRoutes');
 const userRoutes = require('./routes/userRoutes');
-const reviewRoutes = require('./routes/reviewRoutes');       // new
-const watchlistRoutes = require('./routes/watchlistRoutes'); // new
+const reviewRoutes = require('./routes/reviewRoutes');
+const watchlistRoutes = require('./routes/watchlistRoutes');
+const authRoutes = require('./routes/authRoutes'); // Added auth routes
 
 const app = express();
+
+// Initialize Passport
+app.use(passport.initialize());
+require('./config/passport')(passport);
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-// Connect to MongoDB Atlas using the environment variable
+// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -31,8 +37,9 @@ mongoose.connect(process.env.MONGO_URI, {
 // Routes
 app.use('/movies', movieRoutes);
 app.use('/users', userRoutes);
-app.use('/reviews', reviewRoutes);       // new
-app.use('/watchlists', watchlistRoutes); // new
+app.use('/reviews', reviewRoutes);
+app.use('/watchlists', watchlistRoutes);
+app.use('/auth', authRoutes); // Register auth routes
 
 // Swagger documentation route
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -43,6 +50,7 @@ app.use((err, req, res, next) => {
   res.status(500).send({ error: 'Something broke!' });
 });
 
-// Start the server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+module.exports = app;
